@@ -32,11 +32,7 @@ public class MainActivity extends BaseGameActivity {
     }
     @Override
     public EngineOptions onCreateEngineOptions() {
-<<<<<<< HEAD
         camera = new BoundCamera(0, 0, 800, 500);
-=======
-        camera = new BoundCamera(0, 0, 800, 480);
->>>>>>> f6f9f549ce7812406a6877db3a59086a367c4432
         EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(800, 480), this.camera);
         //engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
         engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);

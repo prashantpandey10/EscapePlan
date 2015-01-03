@@ -111,7 +111,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
         createPhysics();
         createGameOverText();
         loadLevel(1);
-        levelCompleteWindow = new LevelCompleteWindow(vbom);
+//        levelCompleteWindow = new LevelCompleteWindow(vbom);
 
     }
 
@@ -432,7 +432,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                 {
                     if (x2.getBody().getUserData().equals("player"))
                     {
-                        player.decreaseFootContacts();
+                     //   player.decreaseFootContacts();
 
                     }
                 }
