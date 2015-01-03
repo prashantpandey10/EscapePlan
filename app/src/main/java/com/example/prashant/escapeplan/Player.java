@@ -9,10 +9,6 @@ import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
-<<<<<<< HEAD
-import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
-=======
->>>>>>> f6f9f549ce7812406a6877db3a59086a367c4432
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 /**
@@ -22,11 +18,8 @@ public abstract class Player extends AnimatedSprite {
     private Body body;
     private boolean canRun = false;
     private int footContacts = 0;
-<<<<<<< HEAD
-    private float ybound;
 
-=======
->>>>>>> f6f9f549ce7812406a6877db3a59086a367c4432
+    private float ybound;
     public Player(float pX, float pY, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld)
     {
         super(pX, pY, ResourcesManager.getInstance().player_region, vbo);
@@ -41,11 +34,8 @@ public abstract class Player extends AnimatedSprite {
 
         body.setUserData("player");
         body.setFixedRotation(true);
-<<<<<<< HEAD
-        ybound=camera.getHeight();
-=======
->>>>>>> f6f9f549ce7812406a6877db3a59086a367c4432
 
+        ybound=camera.getHeight();
         physicsWorld.registerPhysicsConnector(new PhysicsConnector(this, body, true, false)
         {
             @Override
@@ -85,14 +75,7 @@ public abstract class Player extends AnimatedSprite {
 
     public void increaseFootContacts()
     {
-<<<<<<< HEAD
-
         footContacts++;
-
-
-=======
-        footContacts++;
->>>>>>> f6f9f549ce7812406a6877db3a59086a367c4432
     }
 
     public void decreaseFootContacts()
