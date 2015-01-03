@@ -1,3 +1,7 @@
 include ':app'
 include ':andEngine'
+<<<<<<< HEAD
+=======
+include ':andEnginePhysicsBox2DExtension'
+>>>>>>> f6f9f549ce7812406a6877db3a59086a367c4432
 include ':andEngine'
