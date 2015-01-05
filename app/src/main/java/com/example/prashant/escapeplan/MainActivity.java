@@ -2,6 +2,8 @@ package com.example.prashant.escapeplan;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,13 +28,18 @@ public class MainActivity extends BaseGameActivity {
     private BoundCamera camera;
     private ResourcesManager resourcesManager;
 
+
     public Engine onCreaEngine(EngineOptions p)
     {
         return new LimitedFPSEngine(p,60);
     }
     @Override
     public EngineOptions onCreateEngineOptions() {
-        camera = new BoundCamera(0, 0, 800, 500);
+        final DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        camera = new BoundCamera(0, 0,displayMetrics.widthPixels, displayMetrics.heightPixels);
+        //camera = new BoundCamera(0, 0, 800, 500);
         EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(800, 480), this.camera);
         //engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
         engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);

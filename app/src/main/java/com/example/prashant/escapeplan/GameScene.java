@@ -1,5 +1,13 @@
 package com.example.prashant.escapeplan;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Point;
+import android.os.Build;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.WindowManager;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -14,6 +22,7 @@ import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.IEntityModifier;
 import org.andengine.entity.modifier.LoopEntityModifier;
 import org.andengine.entity.modifier.MoveXModifier;
 import org.andengine.entity.modifier.MoveYModifier;
@@ -38,9 +47,12 @@ import org.andengine.util.level.EntityLoader;
 import org.andengine.util.level.constants.LevelConstants;
 import org.andengine.util.level.simple.SimpleLevelEntityLoaderData;
 import org.andengine.util.level.simple.SimpleLevelLoader;
+import org.andengine.util.modifier.IModifier;
+import org.andengine.util.modifier.LoopModifier;
 import org.xml.sax.Attributes;
 
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * Created by prashant on 25/12/14.
@@ -74,8 +86,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
     private boolean firstTouch = false;
     private Text gameOverText;
     private boolean gameOverDisplayed = false;
-
-
+    public static long time1;
+    public static long time2;
+    Random r=new Random();
 
     private void createPhysics()
     {
@@ -94,7 +107,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
     {
         gameHUD = new HUD();
 
-        scoreText = new Text(150, 420, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
+        scoreText = new Text(camera.getXMin()+100, camera.getYMax()-50, resourcesManager.font, "Score: 0123456789", new TextOptions(HorizontalAlign.LEFT), vbom);
 
 
         //scoreText.setAnchorCenter(0, 0);
@@ -105,7 +118,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
 
     @Override
     public void createScene() {
-        setBackground(new Background(Color.BLACK));
+        setBackground(new Background(Color.WHITE));
         createHUD();
         setOnSceneTouchListener(this);
         createPhysics();
@@ -138,7 +151,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
     {
         final SimpleLevelLoader levelLoader = new SimpleLevelLoader(vbom);
 
-        final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
+        final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1.0f, 0.0f, 0.0f);
+
 
         levelLoader.registerEntityLoader(new EntityLoader<SimpleLevelEntityLoaderData>(LevelConstants.TAG_LEVEL)
         {
@@ -161,10 +175,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
         {
             public IEntity onLoadEntity(final String pEntityName, final IEntity pParent, final Attributes pAttributes, final SimpleLevelEntityLoaderData pSimpleLevelEntityLoaderData) throws IOException
             {
-                final int x = SAXUtils.getIntAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_X);
+               final int x = SAXUtils.getIntAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_X);
                 final int y = SAXUtils.getIntAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_Y);
                 final String type = SAXUtils.getAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_TYPE);
 
+                  //final int  x = r.nextInt((int) (camera.getYMax() - camera.getYMin())) + 50;
+
+                  // final int  y = r.nextInt((int) (camera.getYMax() - camera.getYMin())) + 50;
+                Log.d("TAG", String.valueOf(x)+" "+String.valueOf(y));
                 final Sprite levelObject;
 
                 if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM1))
@@ -175,31 +193,38 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                 else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM2))
                 {
                     levelObject = new Sprite(x, y, resourcesManager.platform2_region, vbom);
-                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.StaticBody, FIXTURE_DEF);
+                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.KinematicBody, FIXTURE_DEF);
                     body.setUserData("platform");
                     levelObject.registerEntityModifier(new LoopEntityModifier(new SequenceEntityModifier( // Forward
-                            new MoveYModifier(1.5f, levelObject.getY(),
+
+                            new MoveYModifier(1.0f, levelObject.getY(),
                                     levelObject.getY() - 80),
                             // Backward
-                            new MoveYModifier(1.5f, levelObject.getY() - 80,
+                            new MoveYModifier(1.0f, levelObject.getY() - 80,
                                     levelObject.getY()))));
-                    body.setUserData("platform2");
-                    physicsWorld.registerPhysicsConnector(new PhysicsConnector(levelObject, body, true, false));
+                    body.setUserData("platform");
+
+
+                    physicsWorld.registerPhysicsConnector(new PhysicsConnector(levelObject, body, true, true));
+
                 }
                 else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM3))
                 {
                     levelObject = new Sprite(x, y, resourcesManager.platform3_region, vbom);
-                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.StaticBody, FIXTURE_DEF);
+                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.KinematicBody, FIXTURE_DEF);
 
                     levelObject.registerEntityModifier(new LoopEntityModifier(new SequenceEntityModifier( // Forward
-                            new MoveYModifier(1.5f, levelObject.getY(),
+                            new MoveYModifier(1.0f, levelObject.getY(),
                                     levelObject.getY() + 80),
+
                             // Backward
-                            new MoveYModifier(1.5f, levelObject.getY()+80,
+                            new MoveYModifier(1.0f, levelObject.getY()+80,
                                     levelObject.getY()))));
 
                     body.setUserData("platform");
-                    physicsWorld.registerPhysicsConnector(new PhysicsConnector(levelObject, body, true, false));
+
+                    physicsWorld.registerPhysicsConnector(new PhysicsConnector(levelObject, body, true, true));
+
                 }
 
 
@@ -208,28 +233,30 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                 else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM4))
                 {
                     levelObject = new Sprite(x, y, resourcesManager.platform2_region, vbom);
-                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.StaticBody, FIXTURE_DEF);
+                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.KinematicBody, FIXTURE_DEF);
                     body.setUserData("platform");
                     levelObject.registerEntityModifier(new LoopEntityModifier(new SequenceEntityModifier( // Forward
-                            new MoveYModifier(1.0f, levelObject.getY(),
-                                    levelObject.getY() - 80),
+                            new MoveYModifier(0.8f, levelObject.getY(),
+                                    levelObject.getY() -120),
                             // Backward
-                            new MoveYModifier(1.0f, levelObject.getY() - 80,
+                            new MoveYModifier(0.8f, levelObject.getY() -120,
                                     levelObject.getY()))));
+
                     physicsWorld.registerPhysicsConnector(new PhysicsConnector(levelObject, body, true, false));
                 }
                 else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM5))
                 {
                     levelObject = new Sprite(x, y, resourcesManager.platform3_region, vbom);
-                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.StaticBody, FIXTURE_DEF);
+                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.KinematicBody, FIXTURE_DEF);
                     levelObject.registerEntityModifier(new LoopEntityModifier(new SequenceEntityModifier( // Forward
-                            new MoveYModifier(1.0f, levelObject.getY(),
-                                    levelObject.getY() + 80),
+                            new MoveYModifier(0.8f, levelObject.getY(),
+                                    levelObject.getY() + 120),
                             // Backward
-                            new MoveYModifier(1.0f, levelObject.getY()+80,
+                            new MoveYModifier(0.8f, levelObject.getY()+120,
                                     levelObject.getY()))));
 
                     body.setUserData("platform");
+
                     physicsWorld.registerPhysicsConnector(new PhysicsConnector(levelObject, body, true, false));
                 }
 
@@ -237,13 +264,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                 else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM6))
                 {
                     levelObject = new Sprite(x, y, resourcesManager.platform2_region, vbom);
-                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.StaticBody, FIXTURE_DEF);
+                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.KinematicBody, FIXTURE_DEF);
                     body.setUserData("platform");
                     levelObject.registerEntityModifier(new LoopEntityModifier(new SequenceEntityModifier( // Forward
-                            new MoveYModifier(.8f, levelObject.getY(),
-                                    levelObject.getY() - 80),
+                            new MoveYModifier(.6f, levelObject.getY(),
+                                    levelObject.getY() - 150),
                             // Backward
-                            new MoveYModifier(.8f, levelObject.getY() - 80,
+                            new MoveYModifier(.6f, levelObject.getY() - 150,
                                     levelObject.getY()))));
                     physicsWorld.registerPhysicsConnector(new PhysicsConnector(levelObject, body, true, false));
                 }
@@ -251,12 +278,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                 else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM7))
                 {
                     levelObject = new Sprite(x, y, resourcesManager.platform3_region, vbom);
-                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.StaticBody, FIXTURE_DEF);
+                    final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyDef.BodyType.KinematicBody, FIXTURE_DEF);
                     levelObject.registerEntityModifier(new LoopEntityModifier(new SequenceEntityModifier( // Forward
-                            new MoveYModifier(0.8f, levelObject.getY(),
-                                    levelObject.getY() +80),
+                            new MoveYModifier(0.6f, levelObject.getY(),
+                                    levelObject.getY() +150),
                             // Backward
-                            new MoveYModifier(.8f, levelObject.getY()+80,
+                            new MoveYModifier(.6f, levelObject.getY()+150,
                                     levelObject.getY()))));
 
                     body.setUserData("platform");
@@ -272,12 +299,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                         {
                             super.onManagedUpdate(pSecondsElapsed);
 
-                            /**
-                             * TODO
-                             * we will later check if player collide with this (coin)
-                             * and if it does, we will increase score and hide coin
-                             * it will be completed in next articles (after creating player code)
-                             */
                             if (player.collidesWith(this))
                             {
                                 addToScore(10);
@@ -340,6 +361,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
     public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
         if (pSceneTouchEvent.isActionDown())
         {
+            time1=0;
+            time1=System.currentTimeMillis();
             if (!firstTouch)
             {
                 player.setRunning();
@@ -349,8 +372,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
             {
 
                 if(player.getY()<camera.getHeight())
-                player.jump();
+                        player.jump();
             }
+          //  Log.d("HERe", "down");
+            //Log.d("HERe", "11 is" + time1);
+        }
+      else  if(pSceneTouchEvent.isActionUp())
+        {
+            //Log.d("HERe", "up");
+           // Log.d("HERe", "22 is" + time2);
+            time2=0;
+            time2=System.currentTimeMillis();
         }
         return false;
     }
@@ -364,6 +396,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
         camera.setChaseEntity(null);
         gameOverText.setPosition(camera.getCenterX(), camera.getCenterY());
         attachChild(gameOverText);
+        player.setVisible(false);
         gameOverDisplayed = true;
     }
 
@@ -380,19 +413,21 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener {
                 {
                     if (x2.getBody().getUserData().equals("player"))
                     {
-                        //if(x2.getBody().getPosition().y*PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT<780)
+
+
                         player.increaseFootContacts();
+
                     }
                 }
-                if (x1.getBody().getUserData().equals("platform") && x2.getBody().getUserData().equals("player"))
+             /*   if ((x1.getBody().getUserData().equals("platform") && x2.getBody().getUserData().equals("player")) || (x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("platform")) )
                 {
                     //x1.getBody().setType(BodyDef.BodyType.DynamicBody);
                     camera.setChaseEntity(null);
                     player.setVisible(false);
-
+                    Log.d("HERe", "touched");
                     player.onDie();
 
-                }
+                }*/
                 /*if (x1.getBody().getUserData().equals("platform2") && x2.getBody().getUserData().equals("player"))
                 {
                     camera.setChaseEntity(null);

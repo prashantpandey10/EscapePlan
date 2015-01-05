@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<level width="1400" height="780">
+<level width="1400" height="800">
 <entity x="100" y="100" type="platform1"/>
-<entity x="300" y="450" type="platform2"/>
-<entity x="300" y="80" type="platform3"/>
-<entity x="500" y="330" type="platform4"/>
-<entity x="500" y="80" type="platform5"/>
-<entity x="700" y="400" type="platform6"/>
+<entity x="300" y="750" type="platform2"/>
+<entity x="300" y="200" type="platform3"/>
+<entity x="500" y="530" type="platform4"/>
+<entity x="500" y="180" type="platform5"/>
+<entity x="700" y="600" type="platform6"/>
 <entity x="700" y="100" type="platform7"/>
-<entity x="900" y="400" type="platform6"/>
-<entity x="900" y="200" type="platform7"/>
-<entity x="1100" y="340" type="platform4"/>
-<entity x="1100" y="140" type="platform5"/>
-<entity x="1400" y="230" type="platform6"/>
-<entity x="1400" y="150" type="platform7"/>
+<entity x="900" y="600" type="platform6"/>
+<entity x="900" y="260" type="platform7"/>
+<entity x="1100" y="500" type="platform4"/>
+<entity x="1100" y="240" type="platform5"/>
+<entity x="1400" y="630" type="platform6"/>
+<entity x="1400" y="400" type="platform7"/>
 <entity x="1800" y="400" type="platform2"/>
-<entity x="1800" y="140" type="platform3"/>
+<entity x="1800" y="240" type="platform3"/>
 
 
 <entity x="2100" y="300" type="platform2"/>
